@@ -45,7 +45,7 @@ self.save = (req, res) => {
 };
 
 self.update = (req, res) => {
-  const dataGet = category.findOne({
+  category.findOne({
     where:{
       id: req.params.categoryId
     },
