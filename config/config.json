@@ -6,10 +6,8 @@
     "host": "127.0.0.1",
     "dialect": "mysql",
     "dialectOptions": {
-      "dateStrings": true,
       "typeCast": true
-    },
-    "timezone": "Asia/Jakarta"
+    }
   },
   "test": {
     "username": "root",
@@ -18,10 +16,8 @@
     "host": "127.0.0.1",
     "dialect": "mysql",
     "dialectOptions": {
-      "dateStrings": true,
       "typeCast": true
-    },
-    "timezone": "Asia/Jakarta"
+    }
   },
   "production": {
     "username": "root",
@@ -30,9 +26,7 @@
     "host": "127.0.0.1",
     "dialect": "mysql",
     "dialectOptions": {
-      "dateStrings": true,
       "typeCast": true
-    },
-    "timezone": "Asia/Jakarta"
+    }
   }
 }

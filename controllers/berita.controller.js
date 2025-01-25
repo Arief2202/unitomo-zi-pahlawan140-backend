@@ -1,5 +1,10 @@
 const {news, category, Sequelize} = require('../models');
 const {rs, re} = require('./function/rr_function');
+const {join} = require('path')
+const fs = require('fs');
+const http = require("http");
+const filePath = join(__dirname,`../public/uploads/news/`);
+const path = join(__dirname,`../public/`);
 
 let self = {};
 
@@ -89,16 +94,36 @@ self.get = (req, res) => {
 };
 
 self.save = (req, res) => {
-  news.create(req.body).then((data) => {
-    if(data){
-      rs(res, data);
-    }
-    else{
-      re(res, false, 400, 'create fail');
-    }
-  }).catch((err) => {
-    re(res, err);
-  });
+  if(req.files != null){
+    const file = req.files.gambar;
+    const UFileName = `${new Date().getTime()}-${file.name.replaceAll(" ", "-")}`;
+    file.mv(join(filePath,UFileName), (err) => {
+      if (err) {
+        re(res, err);
+      }
+      dataModel = {
+        categoryId: req.body.categoryId,
+        author: req.body.author,
+        title: req.body.title,
+        imageDesc: req.body.imageDesc,
+        imageSource: req.body.imageSource,
+        content: req.body.content,
+        image: "/uploads/news/"+UFileName,
+      }
+      console.log(dataModel);
+        news.create(dataModel).then((data) => {
+          if(data){
+            rs(res, data);
+          }
+          else{
+            re(res, false, 400, 'create fail');
+          }
+        }).catch((err) => {
+          re(res, err);
+        });
+    });
+  }
+  
 };
 
 self.update = (req, res) => {
@@ -111,6 +136,35 @@ self.update = (req, res) => {
       rs(res, data);
     }else{
       re(res, false, 400, 'update fail');
+    }
+  }).catch((err) => {
+    re(res, err);
+  });
+};
+
+self.update = (req, res) => {
+  news.findOne({
+    where:{
+      id: req.params.beritaId
+    },
+  }).then((data) => {
+    if(data){
+      news.update(req.body, {
+        where:{
+          id: req.params.beritaId
+        }
+      }).then(async (data2) => {
+        if(data2){
+          const beritaResult = await news.findOne({where:{id: req.params.beritaId}});
+          rs(res, beritaResult);
+        }else{
+          re(res, false, 400, 'update fail');
+        }
+      }).catch((err) => {
+        re(res, err);
+      });
+    }else{
+      re(res, false, 410, 'update failed, id not found');
     }
   }).catch((err) => {
     re(res, err);
