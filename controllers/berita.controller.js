@@ -1,4 +1,4 @@
-const {news, Sequelize} = require('../models');
+const {news, category, Sequelize} = require('../models');
 const {rs, re} = require('./function/rr_function');
 
 let self = {};
@@ -13,6 +13,56 @@ self.getAll = (req, res) => {
       rs(res, data);
     }else{
       re(res, false, 404, 'database empty');
+    }
+  }).catch((err) => {
+    re(res, err);
+  });
+};
+
+self.getByCategoryId = (req, res) => {
+  news.findAll({
+    include: [
+      'categories',
+    ],
+    where:{
+      categoryId: req.params.categoryId
+    },
+  }).then((data) => {
+    if(data){
+      rs(res, data);
+    }else{
+      re(res, false, 410, 'this data with this category id doesnt exist');
+    }
+  }).catch((err) => {
+    re(res, err);
+  });
+};
+
+self.getByCategoryName = (req, res) => {
+  category.findOne({
+    where:{
+      categoryName: req.params.categoryName
+    },
+  }).then((data) => {
+    if(data){
+      news.findAll({
+        include: [
+          'categories',
+        ],
+        where:{
+          categoryId: data.id
+        },
+      }).then((data) => {
+        if(data){
+          rs(res, data);
+        }else{
+          re(res, false, 410, 'this data with this category id doesnt exist');
+        }
+      }).catch((err) => {
+        re(res, err);
+      });
+    }else{
+      re(res, false, 410, 'this category name doesnt exist');
     }
   }).catch((err) => {
     re(res, err);
