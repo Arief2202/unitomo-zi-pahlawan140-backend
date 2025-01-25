@@ -1,5 +1,6 @@
 // fungsi untuk memberikan respon ketika proses sukses
 rs = (res, data) => {
+console.log(data);
 return res.status(200).json({
     status: 'ok',
     data: data
