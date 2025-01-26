@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const {news, category, Sequelize} = require('../models');
 const {rs, re} = require('./function/rr_function');
 const {join} = require('path')
@@ -74,6 +75,28 @@ self.getByCategoryName = (req, res) => {
   });
 };
 
+self.search = (req, res) => {
+  news.findAll({
+    include: [
+      'categories',
+    ],
+    where: {
+      [Op.or]: [
+        { 'title': { [Op.like]: '%' + req.params.keyword + '%' } },
+        { '$content$': { [Op.like]: '%' + req.params.keyword + '%' } }
+      ]
+    },
+  }).then((data) => {
+    if(data){
+      rs(res, data);
+    }else{
+      re(res, false, 410, 'this id doesnt exist');
+    }
+  }).catch((err) => {
+    re(res, err);
+  });
+};
+
 self.get = (req, res) => {
   news.findOne({
     include: [
@@ -110,7 +133,6 @@ self.save = (req, res) => {
         content: req.body.content,
         image: "/uploads/news/"+UFileName,
       }
-      console.log(dataModel);
         news.create(dataModel).then((data) => {
           if(data){
             rs(res, data);
