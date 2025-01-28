@@ -19,6 +19,7 @@ process.env.TZ = process.env.SERVER_TIMEZONE
 require('./routes/login.routes')(app, express);
 require('./routes/berita.routes')(app, express);
 require('./routes/category.routes')(app, express);
+require('./routes/carousel.routes')(app, express);
 
 module.exports = app;
 app.listen(port, () => {
