@@ -5,7 +5,6 @@ const {join} = require('path')
 const fs = require('fs');
 const http = require("http");
 const filePath = join(__dirname,`../public/uploads/news/`);
-const path = join(__dirname,`../public/`);
 
 let self = {};
 
@@ -148,30 +147,34 @@ self.save = (req, res) => {
   
 };
 
-self.update = (req, res) => {
-  news.update(req.body, {
-    where:{
-      id: req.params.beritaId
-    }
-  }).then((data) => {
-    if(data){
-      rs(res, data);
-    }else{
-      re(res, false, 400, 'update fail');
-    }
-  }).catch((err) => {
-    re(res, err);
-  });
-};
-
-self.update = (req, res) => {
-  news.findOne({
+self.update = async (req, res) => {
+  await news.findOne({
     where:{
       id: req.params.beritaId
     },
   }).then((data) => {
     if(data){
-      news.update(req.body, {
+      var dataModel = {};
+      if(req.body.categoryId) dataModel.categoryId = req.body.categoryId;
+      if(req.body.author) dataModel.author = req.body.author;
+      if(req.body.title) dataModel.title = req.body.title;
+      if(req.body.imageDesc) dataModel.imageDesc = req.body.imageDesc;
+      if(req.body.imageSource) dataModel.imageSource = req.body.imageSource;
+      if(req.body.content) dataModel.content = req.body.content;
+      if(req.files != null){
+          const file = req.files.gambar;
+          const UFileName = `${new Date().getTime()}-${file.name.replaceAll(" ", "-")}`;
+          file.mv(join(filePath,UFileName), (err) => {
+            if (err) {
+              re(res, err);
+            }
+          });
+          fs.rmSync(join(__dirname,"../public"+data.image), {
+              force: true,
+          });
+          dataModel.image = "/uploads/news/"+UFileName;
+      }
+      news.update(dataModel, {
         where:{
           id: req.params.beritaId
         }
