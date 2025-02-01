@@ -1,5 +1,5 @@
 node_modules
 public/uploads/carousels/*
 public/uploads/news/*
-!public/uploads/carousels
-!public/uploads/news
+!public/uploads/carousels/.gitignore
+!public/uploads/news/.gitignore
