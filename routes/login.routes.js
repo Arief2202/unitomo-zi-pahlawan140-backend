@@ -1,6 +1,7 @@
 module.exports = (app, express) => {
   const bcrypt = require('bcrypt');
   login = require('../controllers/login.controller.js');
+  const verifyLoginToken = require('../middleware/auth.middleware');        //login middleware
   let router = express.Router();
 
   router.get('/test/time', async(req, res) => { 
@@ -50,6 +51,13 @@ module.exports = (app, express) => {
     var response = await login.generateToken(req.body.username, req.body.password);
     res.json(response, response.code)
   })
+
+  router.post('/login/verify', verifyLoginToken, (req, res) => {
+    res.json({
+      "status": "ok",
+      "message": "you are logged in"
+    }, 200)
+  });//update data
 
   app.use('/', router);
 }

@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     imageDesc: DataTypes.STRING,
     imageSource: DataTypes.STRING,
     content: DataTypes.STRING,
+    totalViews: DataTypes.INTEGER,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   }, 

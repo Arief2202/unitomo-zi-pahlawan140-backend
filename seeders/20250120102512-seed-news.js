@@ -15,6 +15,7 @@ module.exports = {
               imageDesc: fakerID_ID.word.words(5),
               imageSource: fakerID_ID.word.words(5),
               content: fakerID_ID.word.words(Math.floor(Math.random() * 100)+100),
+              totalViews: Math.floor(Math.random() * 5000),
               createdAt: new Date(),
               updatedAt: new Date()
             }

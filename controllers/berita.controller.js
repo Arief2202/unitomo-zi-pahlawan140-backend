@@ -24,6 +24,46 @@ self.getAll = (req, res) => {
   });
 };
 
+self.getPopular = (req, res) => {
+  news.findAll({
+    order: [
+      // Will escape title and validate DESC against a list of valid direction parameters
+      ['totalViews', 'DESC'],
+    ],
+    include: [
+      'categories',
+    ],
+}).then((data) => {
+    if(data.length > 0){
+      rs(res, data);
+    }else{
+      re(res, false, 404, 'database empty');
+    }
+  }).catch((err) => {
+    re(res, err);
+  });
+};
+
+self.getNew = (req, res) => {
+  news.findAll({
+    order: [
+      // Will escape title and validate DESC against a list of valid direction parameters
+      ['createdAt', 'DESC'],
+    ],
+    include: [
+      'categories',
+    ],
+}).then((data) => {
+    if(data.length > 0){
+      rs(res, data);
+    }else{
+      re(res, false, 404, 'database empty');
+    }
+  }).catch((err) => {
+    re(res, err);
+  });
+};
+
 self.getByCategoryId = (req, res) => {
   news.findAll({
     include: [
@@ -106,6 +146,8 @@ self.get = (req, res) => {
     },
   }).then((data) => {
     if(data){
+      data.totalViews += 1;
+      data.save();
       rs(res, data);
     }else{
       re(res, false, 410, 'this id doesnt exist');
